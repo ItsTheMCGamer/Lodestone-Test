@@ -33,6 +33,9 @@ import java.awt.*;
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLES;
 
 public class ParticleStickItem extends Item {
+    public static final RenderType renderType = LodestoneRenderTypeRegistry.TEXTURE.applyWithModifier(new ResourceLocation(LodestoneTest.MOD_ID,
+            "textures/misc/beam.png"), b -> b.replaceVertexFormat(TRIANGLES));
+    static VertexConsumer vertexConsumer = RenderHandler.DELAYED_RENDER.getBuffer(renderType);
     public ParticleStickItem(Properties pProperties) {
         super(pProperties);
     }
@@ -72,11 +75,8 @@ public class ParticleStickItem extends Item {
 
         }
     }
-    public static final RenderType renderType = LodestoneRenderTypeRegistry.TEXTURE.applyWithModifier(new ResourceLocation(LodestoneTest.MOD_ID,
-                    "textures/misc/beam.png"), b -> b.replaceVertexFormat(TRIANGLES));
 
     //RenderHandler.DELAYED_RENDER.getBuffer(renderType);
-    static VertexConsumer vertexConsumer = RenderHandler.DELAYED_RENDER.getBuffer(renderType);
 
     private static void renderScreen(RenderLevelStageEvent event) {
         Matrix4f matrix4f = event.getPoseStack().last().pose();
