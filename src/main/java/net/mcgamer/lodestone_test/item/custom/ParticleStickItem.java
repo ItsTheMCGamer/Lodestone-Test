@@ -86,7 +86,6 @@ public class ParticleStickItem extends Item {
                 .renderBeam(vertexConsumer, matrix4f, posStart, posEnd,
                 20);
     }
-
     private boolean isGrassBlock(BlockState state) {
         return state.is(Blocks.GRASS_BLOCK);
     }
