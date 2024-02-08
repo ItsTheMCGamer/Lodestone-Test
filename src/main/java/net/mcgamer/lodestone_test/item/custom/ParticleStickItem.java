@@ -1,10 +1,8 @@
 package net.mcgamer.lodestone_test.item.custom;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mcgamer.lodestone_test.LodestoneTest;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
@@ -19,11 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.eventbus.EventBus;
-import net.minecraftforge.eventbus.api.Event;
-import org.apache.logging.log4j.util.StackLocatorUtil;
 import org.joml.Matrix4f;
-import org.openjdk.nashorn.internal.runtime.regexp.joni.constants.StackType;
 import team.lodestar.lodestone.handlers.RenderHandler;
 import team.lodestar.lodestone.registry.client.LodestoneRenderTypeRegistry;
 import team.lodestar.lodestone.registry.common.particle.LodestoneParticleRegistry;
@@ -35,7 +29,6 @@ import team.lodestar.lodestone.systems.particle.data.spin.SpinParticleData;
 import team.lodestar.lodestone.systems.rendering.VFXBuilders;
 
 import java.awt.*;
-import java.util.Stack;
 
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLES;
 
@@ -44,12 +37,11 @@ public class ParticleStickItem extends Item {
         super(pProperties);
     }
 
-    @Override
-    public InteractionResult useOn(UseOnContext pContext) {
+    public InteractionResult useOn(UseOnContext pContext, RenderLevelStageEvent event) {
         if(!pContext.getLevel().isClientSide()) {
             BlockState state = pContext.getLevel().getBlockState(pContext.getClickedPos());
             if(isGrassBlock(state)) {
-                renderScreen(Color.blue);
+                renderScreen(event);
             }
         }
 
@@ -86,11 +78,13 @@ public class ParticleStickItem extends Item {
     //RenderHandler.DELAYED_RENDER.getBuffer(renderType);
     static VertexConsumer vertexConsumer = RenderHandler.DELAYED_RENDER.getBuffer(renderType);
 
-    private static void renderScreen() {
+    private static void renderScreen(RenderLevelStageEvent event) {
+        Matrix4f matrix4f = event.getPoseStack().last().pose();
         Vec3 posStart = Minecraft.getInstance().getCameraEntity().getEyePosition();
         Vec3 posEnd = new Vec3(posStart.x + 20, posStart.y, posStart.z + 20);
-        VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().renderBeam(vertexConsumer, Matrix4f, posStart, posEnd,
-                2f);
+        VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat()
+                .renderBeam(vertexConsumer, matrix4f, posStart, posEnd,
+                20);
     }
     private boolean isGrassBlock(BlockState state) {
         return state.is(Blocks.GRASS_BLOCK);
