@@ -16,7 +16,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.joml.Matrix4f;
 import team.lodestar.lodestone.handlers.RenderHandler;
 import team.lodestar.lodestone.registry.client.LodestoneRenderTypeRegistry;
@@ -32,25 +36,23 @@ import java.awt.*;
 
 import static com.mojang.blaze3d.vertex.VertexFormat.Mode.TRIANGLES;
 
+@Mod.EventBusSubscriber(modid = "lodestone_test", bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ParticleStickItem extends Item {
     public ParticleStickItem(Properties pProperties) {
         super(pProperties);
     }
 
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand, RenderLevelStageEvent event) {
-        ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
+    @SubscribeEvent
+    public static void renderStages(RenderLevelStageEvent event) {
         renderSphere(event);
-        Minecraft.getInstance().player.sendSystemMessage(Component.literal("This works! But not really..."));
-        return super.use(pLevel, pPlayer, pUsedHand);
     }
 
-    //@Override
-    //public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
-    //if(usedHand.equals(InteractionHand.MAIN_HAND))
-    //spawnParticle(level, player, Color.CYAN, Color.blue);
-    //return super.use(level, player, usedHand);
-    //}
-
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand) {
+        ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("This works!"));
+        return InteractionResultHolder.success(itemstack);
+    }
     private static void spawnParticle(Level level, Player player, Color color, Color endColor) {
         if (level.isClientSide) {
             double x = player.getX() + 0.5f;
@@ -68,12 +70,11 @@ public class ParticleStickItem extends Item {
 
         }
     }
-
-    //RenderHandler.DELAYED_RENDER.getBuffer(renderType);
+    
 
     private static void renderBeam(RenderLevelStageEvent event, Color color) {
         Matrix4f matrix4f = event.getPoseStack().last().pose();
-        Vec3 posStart = Minecraft.getInstance().getCameraEntity().getEyePosition();
+        Vec3 posStart = Minecraft.getInstance().player.position();
         Vec3 posEnd = new Vec3(posStart.x + 20, posStart.y, posStart.z + 20);
         RenderType renderType = LodestoneRenderTypeRegistry.TEXTURE.applyWithModifier(new ResourceLocation(LodestoneTest.MOD_ID,
                 "textures/misc/beam.png"), b -> b.replaceVertexFormat(TRIANGLES));
@@ -86,12 +87,12 @@ public class ParticleStickItem extends Item {
 
     private static void renderSphere(RenderLevelStageEvent event) {
         PoseStack poseStack = event.getPoseStack();
+        poseStack.pushPose();
         RenderType renderType = LodestoneRenderTypeRegistry.TEXTURE.applyWithModifier(new ResourceLocation(LodestoneTest.MOD_ID,
                 "textures/misc/sphere.png"), b -> b.replaceVertexFormat(TRIANGLES));
         VertexConsumer vertexConsumer = RenderHandler.DELAYED_RENDER.getBuffer(renderType);
-        poseStack.pushPose();
-        VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat();
-        builder.renderSphere(vertexConsumer, poseStack, 3, 50, 50);
+        VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat().renderSphere(vertexConsumer,
+                poseStack, 3, 50, 50);
         poseStack.popPose();
     }
 
