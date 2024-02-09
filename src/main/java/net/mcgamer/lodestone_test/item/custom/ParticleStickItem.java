@@ -5,20 +5,18 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.mcgamer.lodestone_test.LodestoneTest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.ScreenEvent;
 import org.joml.Matrix4f;
 import team.lodestar.lodestone.handlers.RenderHandler;
 import team.lodestar.lodestone.registry.client.LodestoneRenderTypeRegistry;
@@ -39,13 +37,11 @@ public class ParticleStickItem extends Item {
         super(pProperties);
     }
 
-    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand,
-                                                  RenderLevelStageEvent event, Color color) {
+    public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand, RenderLevelStageEvent event) {
         ItemStack itemstack = pPlayer.getItemInHand(pUsedHand);
-        if (pLevel.isClientSide() && pPlayer.getUsedItemHand().equals(pUsedHand)) {
-            renderSphere(event);
-        }
-        return InteractionResultHolder.success(itemstack);
+        renderSphere(event);
+        Minecraft.getInstance().player.sendSystemMessage(Component.literal("This works! But not really..."));
+        return super.use(pLevel, pPlayer, pUsedHand);
     }
 
     //@Override
