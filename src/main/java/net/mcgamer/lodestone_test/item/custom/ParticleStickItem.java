@@ -85,19 +85,23 @@ public class ParticleStickItem extends Item {
                 .setLight(30);
     }
 
-    private static void renderSphere(RenderLevelStageEvent event) {
-        PoseStack poseStack = event.getPoseStack();
-        poseStack.pushPose();
-        RenderType renderType = LodestoneRenderTypeRegistry.TEXTURE.applyWithModifier(new ResourceLocation(LodestoneTest.MOD_ID,
-                "textures/misc/sphere.png"), b -> b.replaceVertexFormat(TRIANGLES));
-        VertexConsumer vertexConsumer = RenderHandler.DELAYED_RENDER.getBuffer(renderType);
-        VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat().renderSphere(vertexConsumer,
-                poseStack, 3, 50, 50);
-        poseStack.popPose();
-    }
+    public static final RenderType PERIODIC_TABLE_SPHERE = LodestoneRenderTypeRegistry.TEXTURE
+            .applyWithModifier(new ResourceLocation(LodestoneTest.MOD_ID, "textures/misc/sphere.png"),
+                    b -> b.replaceVertexFormat(TRIANGLES));
 
-    private boolean isGrassBlock(BlockState state) {
-        return state.is(Blocks.GRASS_BLOCK);
+
+    private static void renderSphere(RenderLevelStageEvent event) {
+        Vec3 spherePos = new Vec3(2.0, 2.0, 2.0);
+        Vec3 playerPos = Minecraft.getInstance().player.position();
+        PoseStack stack = event.getPoseStack();
+
+        stack.pushPose();
+        stack.translate(spherePos.x + playerPos.x, spherePos.y + playerPos.y, spherePos.z + playerPos.z);
+
+        VFXBuilders.WorldVFXBuilder builder = new VFXBuilders.WorldVFXBuilder();
+        builder.renderSphere(RenderHandler.DELAYED_RENDER.getBuffer(PERIODIC_TABLE_SPHERE), stack, 4f, 30, 30);
+
+        stack.popPose();
     }
 }
 

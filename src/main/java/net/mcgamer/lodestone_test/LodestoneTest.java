@@ -2,8 +2,9 @@ package net.mcgamer.lodestone_test;
 
 import com.mojang.logging.LogUtils;
 import net.mcgamer.lodestone_test.item.ModItems;
-import net.minecraft.world.item.CreativeModeTab;
+import net.mcgamer.lodestone_test.item.custom.ParticleStickItem;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -15,10 +16,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
-import team.lodestar.lodestone.registry.common.particle.LodestoneParticleRegistry;
-import team.lodestar.lodestone.registry.common.particle.LodestoneScreenParticleRegistry;
-import team.lodestar.lodestone.systems.particle.builder.WorldParticleBuilder;
-import team.lodestar.lodestone.systems.particle.type.LodestoneParticleType;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(LodestoneTest.MOD_ID)
