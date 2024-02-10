@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import static net.mcgamer.lodestone_test.item.custom.BeamRenderer.Renderer.renderBeam;
 
+@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ParticleStickItem extends Item implements BeamRenderer{
     public ParticleStickItem(Properties pProperties) {
         super(pProperties);

@@ -31,8 +31,8 @@ interface BeamRenderer {
 
         public static void renderBeam(RenderLevelStageEvent event) {
             PoseStack poseStack = event.getPoseStack();
-            Vec3 startPos = new Vec3(3, 63, 0);
-            Vec3 endPos = startPos.add(1, 10, 1);
+            Vec3 startPos = Minecraft.getInstance().player.position();
+            Vec3 endPos = startPos.add(1, 0, 1);
 
             VFXBuilders.WorldVFXBuilder builder = VFXBuilders.createWorld().setPosColorTexLightmapDefaultFormat();
             VertexConsumer consumer = RenderHandler.DELAYED_RENDER.getBuffer(PERIODIC_TABLE_BEAM);
